@@ -1,0 +1,44 @@
+#include<lpc17xx.h>
+void lcdwrt(Unsigned char ch);
+void delay(Unsingd long int x);
+main()
+{
+int i;
+unsigned char cmd[]={0x38,0x0E,0x01,0x06,0x80};
+unsigned char str[]="PESIT BSC"
+SystemInit();
+LPC_SC->PCONP=0x00008000;
+
+LPC_GPIO2->FIOMASK=0xFFFFFF0F;
+LPC_GPIO2->FIODIR=0x000000F0;
+LPC_GPIO1->FIOMASK=0xFFFFF8FF;
+LPC_GPIO1->FIODIR=0x00000700;
+
+LPC_GPIO1->FIOCLR1=0x03;
+for(i=0;i<5;i++)
+{
+	lcdwrt(cmd[i]);
+}
+LPC_GPIO1->FIOSET1=0x03;
+for(i=0;str[i]!='\0';i++)
+{
+	lcdwrt(str[i]);
+}
+}
+
+void lcdwrt(Unsigned char ch)
+{
+unsigned char val;
+
+val=ch&0xF0;
+LPC_GPIO1->FIOSET1=0x04;
+delay(0x500);
+LPC_GPIO1->FIOCLR1=0x04;
+delay(0x500);
+
+val=(ch<<4)&0xF0;
+LPC_GPIO1->FIOSET1=0x04;
+delay(0x500);
+LPC_GPIO1->FIOCLR1=0x04;
+delay(0x500);
+}
